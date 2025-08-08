@@ -10,7 +10,7 @@ type SymbolPriceState = {
   error?: string;
 };
 
-const FUNKIT_API_KEY = process.env.NEXT_PUBLIC_FUNKIT_API_KEY ?? "";
+const FUNKIT_API_KEY: string = process.env["NEXT_PUBLIC_FUNKIT_API_KEY"] ?? "";
 
 export function usePrices(symbols: string[]): {
   map: Record<string, SymbolPriceState>;
@@ -26,16 +26,14 @@ export function usePrices(symbols: string[]): {
     setError(undefined);
     setMap((prev) => {
       const next: Record<string, SymbolPriceState> = { ...prev };
-      for (const s of symbols) next[s] = { ...prev[s], loading: true, error: undefined };
+      for (const s of symbols)
+        next[s] = { ...prev[s], loading: true, error: undefined };
       return next;
     });
     try {
       const results = await Promise.all(
         symbols.map(async (symbol) => {
-          const price = await getAssetPriceInfo(
-            { symbol },
-            { headers: { "x-api-key": FUNKIT_API_KEY } }
-          );
+          const price = await getAssetPriceInfo({ symbol, apiKey: FUNKIT_API_KEY });
           const mapped: PriceInfo = {
             symbol: price.symbol,
             priceUsd: Number(price.priceUsd),
@@ -54,7 +52,8 @@ export function usePrices(symbols: string[]): {
       setError(message);
       setMap((prev) => {
         const next: Record<string, SymbolPriceState> = { ...prev };
-        for (const s of symbols) next[s] = { ...prev[s], loading: false, error: message };
+        for (const s of symbols)
+          next[s] = { ...prev[s], loading: false, error: message };
         return next;
       });
     }
@@ -64,9 +63,10 @@ export function usePrices(symbols: string[]): {
     void fetchAll();
   }, [fetchAll]);
 
-  const loading = React.useMemo(() => symbols.some((s) => map[s]?.loading), [symbols, map]);
+  const loading = React.useMemo(
+    () => symbols.some((s) => map[s]?.loading),
+    [symbols, map]
+  );
 
   return { map, refresh: fetchAll, loading, error };
 }
-
-

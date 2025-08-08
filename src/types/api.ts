@@ -1,6 +1,7 @@
 export interface Erc20AssetRequest {
   chainId: number;
   symbol: string;
+  apiKey?: string;
 }
 
 export interface Erc20Asset {
@@ -13,6 +14,7 @@ export interface Erc20Asset {
 
 export interface PriceInfoRequest {
   symbol: string;
+  apiKey?: string;
 }
 
 export interface PriceInfo {
@@ -26,4 +28,3 @@ export interface TokenOption {
   value: string;
   chainId: number;
 }
-

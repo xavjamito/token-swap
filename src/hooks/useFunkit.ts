@@ -1,8 +1,16 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { getAssetErc20ByChainAndSymbol, getAssetPriceInfo } from "@funkit/api-base";
-import type { Erc20Asset, Erc20AssetRequest, PriceInfo, PriceInfoRequest } from "@/src/types/api";
+import {
+  getAssetErc20ByChainAndSymbol,
+  getAssetPriceInfo,
+} from "@funkit/api-base";
+import type {
+  Erc20Asset,
+  Erc20AssetRequest,
+  PriceInfo,
+  PriceInfoRequest,
+} from "@/src/types/api";
 
 interface AsyncState<T> {
   data?: T;
@@ -10,21 +18,26 @@ interface AsyncState<T> {
   error?: string;
 }
 
-const FUNKIT_API_KEY = process.env.NEXT_PUBLIC_FUNKIT_API_KEY ?? "";
+const FUNKIT_API_KEY: string = process.env["NEXT_PUBLIC_FUNKIT_API_KEY"] ?? "";
 
 export function useFunkitApi() {
-  const [assetState, setAssetState] = useState<AsyncState<Erc20Asset>>({ loading: false });
-  const [priceState, setPriceState] = useState<AsyncState<PriceInfo>>({ loading: false });
+  const [assetState, setAssetState] = useState<AsyncState<Erc20Asset>>({
+    loading: false,
+  });
+  const [priceState, setPriceState] = useState<AsyncState<PriceInfo>>({
+    loading: false,
+  });
 
   const hasApiKey = useMemo(() => FUNKIT_API_KEY.length > 0, []);
 
   const fetchAsset = useCallback(async (req: Erc20AssetRequest) => {
     setAssetState({ loading: true });
     try {
-      const asset = await getAssetErc20ByChainAndSymbol(
-        { chainId: req.chainId, symbol: req.symbol },
-        { headers: { "x-api-key": FUNKIT_API_KEY } }
-      );
+      const asset = await getAssetErc20ByChainAndSymbol({
+        chainId: req.chainId,
+        symbol: req.symbol,
+        apiKey: FUNKIT_API_KEY,
+      });
       const mapped: Erc20Asset = {
         name: asset.name,
         symbol: asset.symbol,
@@ -44,10 +57,10 @@ export function useFunkitApi() {
   const fetchPrice = useCallback(async (req: PriceInfoRequest) => {
     setPriceState({ loading: true });
     try {
-      const price = await getAssetPriceInfo(
-        { symbol: req.symbol },
-        { headers: { "x-api-key": FUNKIT_API_KEY } }
-      );
+      const price = await getAssetPriceInfo({
+        symbol: req.symbol,
+        apiKey: FUNKIT_API_KEY,
+      });
       const mapped: PriceInfo = {
         symbol: price.symbol,
         priceUsd: Number(price.priceUsd),
@@ -70,5 +83,3 @@ export function useFunkitApi() {
     fetchPrice,
   };
 }
-
-

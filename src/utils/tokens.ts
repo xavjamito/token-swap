@@ -10,4 +10,3 @@ export const SUPPORTED_TOKENS: TokenOption[] = [
 export function findTokenBySymbol(symbol: string): TokenOption | undefined {
   return SUPPORTED_TOKENS.find((t) => t.value === symbol);
 }
-
