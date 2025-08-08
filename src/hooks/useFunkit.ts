@@ -5,6 +5,7 @@ import {
   getAssetErc20ByChainAndSymbol,
   getAssetPriceInfo,
 } from "@funkit/api-base";
+import { findTokenBySymbol } from "@/src/utils/tokens";
 import type {
   Erc20Asset,
   Erc20AssetRequest,
@@ -34,7 +35,7 @@ export function useFunkitApi() {
     setAssetState({ loading: true });
     try {
       const asset = await getAssetErc20ByChainAndSymbol({
-        chainId: req.chainId,
+        chainId: String(req.chainId),
         symbol: req.symbol,
         apiKey: FUNKIT_API_KEY,
       });
@@ -57,14 +58,24 @@ export function useFunkitApi() {
   const fetchPrice = useCallback(async (req: PriceInfoRequest) => {
     setPriceState({ loading: true });
     try {
-      const price = await getAssetPriceInfo({
+      const token = findTokenBySymbol(req.symbol);
+      if (!token) {
+        throw new Error(`Unsupported token: ${req.symbol}`);
+      }
+      const asset = await getAssetErc20ByChainAndSymbol({
+        chainId: String(token.chainId),
         symbol: req.symbol,
         apiKey: FUNKIT_API_KEY,
       });
+      const price = await getAssetPriceInfo({
+        chainId: String(token.chainId),
+        assetTokenAddress: asset.address,
+        apiKey: FUNKIT_API_KEY,
+      });
       const mapped: PriceInfo = {
-        symbol: price.symbol,
-        priceUsd: Number(price.priceUsd),
-        updatedAt: price.updatedAt,
+        symbol: req.symbol,
+        priceUsd: Number(price.unitPrice),
+        updatedAt: new Date().toISOString(),
       };
       setPriceState({ loading: false, data: mapped });
       return mapped;

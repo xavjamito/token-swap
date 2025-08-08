@@ -1,8 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { getAssetPriceInfo } from "@funkit/api-base";
+import { getAssetErc20ByChainAndSymbol, getAssetPriceInfo } from "@funkit/api-base";
 import type { PriceInfo } from "@/src/types/api";
+import { findTokenBySymbol } from "@/src/utils/tokens";
 
 type SymbolPriceState = {
   data?: PriceInfo;
@@ -33,11 +34,22 @@ export function usePrices(symbols: string[]): {
     try {
       const results = await Promise.all(
         symbols.map(async (symbol) => {
-          const price = await getAssetPriceInfo({ symbol, apiKey: FUNKIT_API_KEY });
+          const token = findTokenBySymbol(symbol);
+          if (!token) throw new Error(`Unsupported token: ${symbol}`);
+          const asset = await getAssetErc20ByChainAndSymbol({
+            chainId: String(token.chainId),
+            symbol,
+            apiKey: FUNKIT_API_KEY,
+          });
+          const price = await getAssetPriceInfo({
+            chainId: String(token.chainId),
+            assetTokenAddress: asset.address,
+            apiKey: FUNKIT_API_KEY,
+          });
           const mapped: PriceInfo = {
-            symbol: price.symbol,
-            priceUsd: Number(price.priceUsd),
-            updatedAt: price.updatedAt,
+            symbol,
+            priceUsd: Number(price.unitPrice),
+            updatedAt: new Date().toISOString(),
           };
           return mapped;
         })
