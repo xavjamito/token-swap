@@ -4,6 +4,7 @@ import * as React from "react";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
 import { SUPPORTED_TOKENS } from "@/src/utils/tokens";
+import { TokenIcon } from "@/components/TokenIcon";
 
 export interface TokenSelectorProps {
   label: string;
@@ -11,13 +12,20 @@ export interface TokenSelectorProps {
   onChange: (symbol: string) => void;
 }
 
-export function TokenSelector({ label, value, onChange }: TokenSelectorProps): React.JSX.Element {
+export function TokenSelector({
+  label,
+  value,
+  onChange,
+}: TokenSelectorProps): React.JSX.Element {
   const [query, setQuery] = React.useState<string>("");
 
   const filtered = React.useMemo(() => {
     const q = query.trim().toLowerCase();
     if (q.length === 0) return SUPPORTED_TOKENS;
-    return SUPPORTED_TOKENS.filter((t) => t.label.toLowerCase().includes(q) || t.value.toLowerCase().includes(q));
+    return SUPPORTED_TOKENS.filter(
+      (t) =>
+        t.label.toLowerCase().includes(q) || t.value.toLowerCase().includes(q)
+    );
   }, [query]);
 
   return (
@@ -31,11 +39,14 @@ export function TokenSelector({ label, value, onChange }: TokenSelectorProps): R
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           )}
           onClick={(e) => {
-            const menu = (e.currentTarget.nextSibling as HTMLDivElement | null);
+            const menu = e.currentTarget.nextSibling as HTMLDivElement | null;
             if (menu) menu.classList.toggle("hidden");
           }}
         >
-          <span>{value}</span>
+          <span className="flex items-center gap-2">
+            <TokenIcon symbol={value} />
+            {value}
+          </span>
           <CaretSortIcon className="h-4 w-4 opacity-70" />
         </button>
         <div className="absolute z-10 mt-1 hidden w-full rounded-md border bg-popover p-2 shadow">
@@ -56,14 +67,19 @@ export function TokenSelector({ label, value, onChange }: TokenSelectorProps): R
                 type="button"
                 onClick={(e) => {
                   onChange(token.value);
-                  const menu = (e.currentTarget.closest("div.absolute") as HTMLDivElement | null);
+                  const menu = e.currentTarget.closest(
+                    "div.absolute"
+                  ) as HTMLDivElement | null;
                   if (menu) menu.classList.add("hidden");
                 }}
               >
-                <span>
+                <span className="flex items-center gap-2">
+                  <TokenIcon symbol={token.value} />
                   {token.label}
                 </span>
-                {value === token.value ? <CheckIcon className="h-4 w-4" /> : null}
+                {value === token.value ? (
+                  <CheckIcon className="h-4 w-4" />
+                ) : null}
               </button>
             ))}
           </div>
@@ -72,5 +88,3 @@ export function TokenSelector({ label, value, onChange }: TokenSelectorProps): R
     </div>
   );
 }
-
-

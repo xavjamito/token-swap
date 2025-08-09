@@ -9,5 +9,3 @@ export function isValidUsdAmount(value: string): boolean {
   if (value.trim().length === 0) return false;
   return /^\d*(?:\.\d{0,2})?$/.test(value);
 }
-
-

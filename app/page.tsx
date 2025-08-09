@@ -6,8 +6,8 @@ import { TokenSelector } from "@/components/TokenSelector";
 import { PriceDisplay } from "@/components/PriceDisplay";
 import { isValidUsdAmount } from "@/lib/utils";
 import { usePrices } from "@/src/hooks/usePrices";
-import { findTokenBySymbol } from "@/src/utils/tokens";
 import { Button } from "@/components/ui/button";
+import { ArrowLeftRight, RefreshCcw } from "lucide-react";
 
 export default function Home(): React.JSX.Element {
   const [fromSymbol, setFromSymbol] = React.useState<string>("USDC");
@@ -19,7 +19,10 @@ export default function Home(): React.JSX.Element {
     setToSymbol(fromSymbol);
   }, [fromSymbol, toSymbol]);
 
-  const usdAmount = React.useMemo(() => (isValidUsdAmount(usd) ? Number(usd || 0) : 0), [usd]);
+  const usdAmount = React.useMemo(
+    () => (isValidUsdAmount(usd) ? Number(usd || 0) : 0),
+    [usd]
+  );
 
   const { map, refresh, loading, error } = usePrices([fromSymbol, toSymbol]);
   const fromPrice = map[fromSymbol]?.data?.priceUsd;
@@ -31,10 +34,16 @@ export default function Home(): React.JSX.Element {
         <h1 className="text-2xl font-semibold">Token Swap</h1>
         <div className="rounded-lg border p-4 space-y-4">
           <div className="grid grid-cols-1 gap-3">
-            <TokenSelector label="From" value={fromSymbol} onChange={setFromSymbol} />
+            <TokenSelector
+              label="From"
+              value={fromSymbol}
+              onChange={setFromSymbol}
+            />
             <TokenSelector label="To" value={toSymbol} onChange={setToSymbol} />
             <div>
-              <div className="text-sm text-muted-foreground mb-1">USD Amount</div>
+              <div className="text-sm text-muted-foreground mb-1">
+                USD Amount
+              </div>
               <Input
                 inputMode="decimal"
                 placeholder="0.00"
@@ -42,15 +51,23 @@ export default function Home(): React.JSX.Element {
                 onChange={(e) => setUsd(e.target.value)}
               />
               {!isValidUsdAmount(usd) ? (
-                <div className="text-xs text-red-600 mt-1">Enter a valid USD amount (max 2 decimals).</div>
+                <div className="text-xs text-red-600 mt-1">
+                  Enter a valid USD amount (max 2 decimals).
+                </div>
               ) : null}
             </div>
           </div>
           <div className="flex gap-2">
             <Button type="button" variant="outline" onClick={swap}>
+              <ArrowLeftRight className="mr-2 h-4 w-4" />
               Swap tokens
             </Button>
-            <Button type="button" variant="ghost" onClick={() => void refresh()}>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => void refresh()}
+            >
+              <RefreshCcw className="mr-2 h-4 w-4" />
               Refresh prices
             </Button>
           </div>

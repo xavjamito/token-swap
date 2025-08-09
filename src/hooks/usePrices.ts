@@ -1,7 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { getAssetErc20ByChainAndSymbol, getAssetPriceInfo } from "@funkit/api-base";
+import {
+  getAssetErc20ByChainAndSymbol,
+  getAssetPriceInfo,
+} from "@funkit/api-base";
 import type { PriceInfo } from "@/src/types/api";
 import { findTokenBySymbol } from "@/src/utils/tokens";
 
@@ -21,6 +24,7 @@ export function usePrices(symbols: string[]): {
 } {
   const [map, setMap] = React.useState<Record<string, SymbolPriceState>>({});
   const [error, setError] = React.useState<string | undefined>(undefined);
+  const symbolsKey = React.useMemo(() => symbols.join("|"), [symbols]);
 
   const fetchAll = React.useCallback(async () => {
     if (symbols.length === 0) return;
@@ -69,7 +73,7 @@ export function usePrices(symbols: string[]): {
         return next;
       });
     }
-  }, [symbols]);
+  }, [symbolsKey]);
 
   React.useEffect(() => {
     void fetchAll();
