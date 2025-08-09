@@ -20,7 +20,8 @@ const initialState: ThemeProviderState = {
   setTheme: () => null,
 };
 
-const ThemeProviderContext = React.createContext<ThemeProviderState>(initialState);
+const ThemeProviderContext =
+  React.createContext<ThemeProviderState>(initialState);
 
 export function ThemeProvider({
   children,
@@ -28,9 +29,16 @@ export function ThemeProvider({
   storageKey = "token-swap-ui-theme",
   ...props
 }: ThemeProviderProps): React.JSX.Element {
-  const [theme, setTheme] = React.useState<Theme>(
-    () => (localStorage?.getItem(storageKey) as Theme) || defaultTheme
-  );
+  const [theme, setTheme] = React.useState<Theme>(defaultTheme);
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+    const storedTheme = localStorage?.getItem(storageKey) as Theme;
+    if (storedTheme) {
+      setTheme(storedTheme);
+    }
+  }, [storageKey]);
 
   React.useEffect(() => {
     const root = window.document.documentElement;
@@ -57,6 +65,10 @@ export function ThemeProvider({
       setTheme(theme);
     },
   };
+
+  if (!mounted) {
+    return <div style={{ visibility: "hidden" }}>{children}</div>;
+  }
 
   return (
     <ThemeProviderContext.Provider {...props} value={value}>
