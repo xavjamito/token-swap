@@ -7,6 +7,7 @@ import { PriceDisplay } from "@/components/PriceDisplay";
 import { isValidUsdAmount } from "@/lib/utils";
 import { usePrices } from "@/src/hooks/usePrices";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { ArrowLeftRight, RefreshCcw } from "lucide-react";
 
 export default function Home(): React.JSX.Element {
@@ -31,7 +32,10 @@ export default function Home(): React.JSX.Element {
   return (
     <main className="min-h-screen w-full flex items-center justify-center p-4">
       <div className="w-full max-w-xl space-y-4">
-        <h1 className="text-2xl font-semibold">Token Swap</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-semibold">Token Swap</h1>
+          <ThemeToggle />
+        </div>
         <div className="rounded-lg border p-4 space-y-4">
           <div className="grid grid-cols-1 gap-3">
             <TokenSelector
