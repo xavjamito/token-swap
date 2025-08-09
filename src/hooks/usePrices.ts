@@ -24,7 +24,6 @@ export function usePrices(symbols: string[]): {
 } {
   const [map, setMap] = React.useState<Record<string, SymbolPriceState>>({});
   const [error, setError] = React.useState<string | undefined>(undefined);
-  const symbolsKey = React.useMemo(() => symbols.join("|"), [symbols]);
 
   const fetchAll = React.useCallback(async () => {
     if (symbols.length === 0) return;
@@ -73,7 +72,7 @@ export function usePrices(symbols: string[]): {
         return next;
       });
     }
-  }, [symbolsKey]);
+  }, [symbols]);
 
   React.useEffect(() => {
     void fetchAll();

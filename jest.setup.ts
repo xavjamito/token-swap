@@ -43,7 +43,7 @@ jest.mock("@/components/TokenIcon", () => ({
 }));
 
 // Mock environment variables
-process.env.NEXT_PUBLIC_FUNKIT_API_KEY = "test-api-key";
+process.env["NEXT_PUBLIC_FUNKIT_API_KEY"] = "test-api-key";
 
 // Mock localStorage
 const localStorageMock = {
@@ -51,6 +51,8 @@ const localStorageMock = {
   setItem: jest.fn(),
   removeItem: jest.fn(),
   clear: jest.fn(),
+  length: 0,
+  key: jest.fn(),
 };
 global.localStorage = localStorageMock;
 

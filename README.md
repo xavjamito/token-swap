@@ -70,7 +70,9 @@ A production-ready React application for crypto token swapping with real-time pr
 
 ## Deployed Application
 
-[Link to deployed application will be added here]
+**Live Demo**: [https://token-swap-eosin.vercel.app/](https://token-swap-eosin.vercel.app/)
+
+The application is deployed on Vercel with automatic deployments from the main branch.
 
 ## Technical Stack
 
